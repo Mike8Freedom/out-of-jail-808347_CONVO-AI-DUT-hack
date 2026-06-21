@@ -296,24 +296,22 @@ Unlike clinical wellness apps (3% Day-30 retention), Out of Jail drives return v
 
 ## 🚀 Quick Start
 
+### 🌐 Try It Live
+
+| | |
+|---|---|
+| 🤖 **[AI Agent + Solana Page](https://outofjail-808347.tilda.ws/c1)** | Connect wallet → Talk to Noemi → Claim reward |
+| 🎮 **[Full Game Build](https://outofjail-808347.tilda.ws/)** | Complete session flow with intro, prisoner message & session |
+| 🎬 **[Game Teaser](https://vimeo.com/1144530154)** | 60-second cinematic trailer |
+
+### 🛠️ Run Locally
+
 ```bash
-# Clone
 git clone https://github.com/Mike8Freedom/out-of-jail-808347_CONVO-AI-DUT-hack.git
 cd out-of-jail-808347_CONVO-AI-DUT-hack
-
-# Start proxy server (required for Agora API calls)
 node proxy-server.js
-
-# Open in browser
 open http://localhost:8080/noemi-widget.html
 ```
-
-**Flow:** 👛 Connect Phantom → 🎙️ Start Session → 🗣️ Talk to Noemi → 🏆 Claim Reward
-
-**Requirements:**
-- 📦 Node.js 18+
-- 👛 Phantom wallet browser extension (set to Solana devnet)
-- 💰 Devnet SOL for NFT minting (free airdrop inside Phantom)
 
 ---
 
