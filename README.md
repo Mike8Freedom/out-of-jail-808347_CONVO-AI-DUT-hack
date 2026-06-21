@@ -29,14 +29,14 @@
 
 Developer burnout is an industry-wide crisis with measurable business impact:
 
-> **83%** of software developers experience burnout — [Haystack Analytics, 2024](https://www.usehaystack.io/blog/the-state-of-developer-burnout-2024)
+> **65%** of software engineers experience burnout even at companies using AI tools — [LeadDev Engineering Survey, 2025](https://devops.com/survey-surfaces-high-devops-burnout-rates-despite-ai-advances/). Developer burnout costs employers **$300 billion/year** globally.
 
 | 😰 | 💸 | 📉 |
 |:---:|:---:|:---:|
-| **80%** of developers feel unhappy in their roles. **1 in 3** actively hate their job | **$150K–$350K** cost to replace a single burned-out engineer | **~3%** Day-30 retention on existing mental health apps |
-| [Stack Overflow, 2024](https://survey.stackoverflow.co/2024/) | Recruitment + onboarding + lost productivity | Clinical, impersonal, disconnected from developer identity |
+| **74%** burnout rate among software engineers & DevOps — highest in tech sector | **$150K–$350K** cost to replace a single burned-out engineer | **~3%** Day-30 retention on existing mental health apps |
+| [DevX, 2026](https://www.devx.com/uncategorized/developer-burnout-crisis-mental-health-tech-2026/) | Recruitment + onboarding + lost productivity | Clinical, impersonal, disconnected from developer identity |
 
-**73%** can't access mental-health care because it's too expensive.
+**73%** can't access mental-health care because it's too expensive. **Nearly half** of developers have considered leaving the industry entirely.
 
 > 💡 **The gap:** No product on the market treats developer mental health as a game worth playing — with real stakes, real characters, and real therapeutic outcomes.
 
