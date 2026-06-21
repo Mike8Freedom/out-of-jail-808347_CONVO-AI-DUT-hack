@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Белый Аист — IT Hero</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300;400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #111;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── PHONE SHELL ── */
+    .phone {
+      width: 390px;
+      height: 844px;
+      position: relative;
+      overflow: hidden;
+      background: #1a1919;
+      border-radius: 40px;
+      box-shadow:
+        0 40px 120px rgba(0,0,0,0.8),
+        0 0 0 1px rgba(255,255,255,0.07);
+    }
+
+    /* ── BG PHOTO ── */
+    .bg-photo {
+      position: absolute;
+      left: -3px; top: 9px;
+      width: 410px; height: 600px;
+      border-radius: 50px;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .bg-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+    }
+
+    /* dark gradient overlay — fades image into #1a1a1a */
+    .bg-overlay {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%; height: 620px;
+      background: linear-gradient(
+        180deg,
+        rgba(26,25,25,0.10) 0%,
+        rgba(26,25,25,0.18) 30%,
+        rgba(26,25,25,0.60) 60%,
+        rgba(26,25,25,0.88) 80%,
+        #1a1919 100%
+      );
+      z-index: 1;
+    }
+
+    /* solid dark fill below the photo */
+    .bg-dark {
+      position: absolute;
+      left: 0; top: 600px;
+      width: 100%; height: 244px;
+      background: #1a1919;
+      z-index: 1;
+    }
+
+    /* ── RATING BADGE ── */
+    .rating {
+      position: absolute;
+      left: 20px; top: 22px;
+      z-index: 10;
+      display: flex; align-items: center; gap: 0;
+      background: rgba(20,20,20,0.70);
+      backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 5px 10px 5px 8px;
+    }
+    .rating__score {
+      font-size: 15px; font-weight: 700;
+      color: #fff; line-height: 1;
+      margin-right: 6px;
+    }
+    .rating__sep {
+      width: 1px; height: 22px;
+      background: rgba(255,255,255,0.22);
+      margin-right: 7px;
+    }
+    .rating__ya {
+      display: flex; align-items: center; gap: 5px;
+    }
+    .rating__ya-dot {
+      width: 24px; height: 24px;
+      background: #FC3F1D;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 900;
+      color: #fff; font-family: serif;
+      flex-shrink: 0;
+    }
+    .rating__ya-label {
+      font-size: 9px; font-weight: 400;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.35;
+    }
+
+    /* ── АПГРЕЙД ── */
+    .apgrade-wrap {
+      position: absolute;
+      left: 28px; top: 108px;
+      width: 334px; height: 66px;
+      z-index: 5;
+    }
+    /* gradient border trick: padding-box bg + border-box gradient */
+    .apgrade-border {
+      position: absolute; inset: 0;
+      border-radius: 40px;
+      background:
+        linear-gradient(rgba(30,30,30,0.18), rgba(30,30,30,0.18)) padding-box,
+        linear-gradient(90deg, #FA6A00 0%, #94E9F8 100%) border-box;
+      border: 2.5px solid transparent;
+    }
+    .apgrade-text {
+      position: absolute;
+      left: 0; right: 0; top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
+      font-size: 40px; font-weight: 300;
+      letter-spacing: 10px;
+      color: #fff;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    /* ── ПРОДУКТИВНОСТИ ── */
+    .productivity {
+      position: absolute;
+      left: 0; right: 0; top: 193px;
+      text-align: center;
+      font-size: 30px; font-weight: 400; letter-spacing: -0.3px;
+      line-height: 1.15;
+      /* white → teal gradient text */
+      background: linear-gradient(90deg, #fff 20%, #5CDCD2 80%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      z-index: 5;
+    }
+
+    /* ── а не отпуск ── */
+    .a-ne {
+      position: absolute;
+      right: 20px; top: 240px;
+      font-size: 28px; font-weight: 300;
+      line-height: 1.2; z-index: 5;
+      white-space: nowrap;
+    }
+    .a-ne__plain {
+      color: #fff;
+      font-style: italic;
+    }
+    .a-ne__teal {
+      font-style: italic;
+      background: linear-gradient(90deg, #94E9F8 0%, #5CDCD2 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── CHARACTER ── */
+    .char-wrap {
+      position: absolute;
+      left: -50px; top: 255px;
+      width: 250px; height: 200px;
+      z-index: 4;
+      transform: rotate(-8deg);
+    }
+    .char-shadow {
+      position: absolute;
+      left: -20px; bottom: -10px;
+      width: 240px; height: 50px;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.35) 0%, transparent 70%);
+    }
+    .char-img {
+      width: 230px; height: 185px;
+      object-fit: contain; object-position: center bottom;
+      opacity: 0.92;
+      position: relative; z-index: 1;
+    }
+
+    /* ── PILL TAGS ── */
+    .tags {
+      position: absolute;
+      left: 12px; top: 405px;
+      z-index: 6;
+      display: flex; flex-direction: column;
+      gap: 5px;
+    }
+
+    /* gradient border via pseudo-element mask */
+    .pill {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 100px;
+      font-size: 20px; font-weight: 300; letter-spacing: -0.2px;
+      white-space: nowrap;
+      transform: rotate(-0.5deg);
+      position: relative;
+    }
+    .pill::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 100px;
+      padding: 2.5px;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    /* перезагрузка — green→teal */
+    .pill-reload {
+      background: rgba(38,38,38,0.96);
+    }
+    .pill-reload::before {
+      background: linear-gradient(90deg, #5FC52F, #94E9F8);
+    }
+    .pill-reload span {
+      background: linear-gradient(180deg, #fff 0%, #e8f8ff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* закончить спринт — orange→teal */
+    .pill-sprint {
+      background: rgba(38,38,38,0.42);
+    }
+    .pill-sprint::before {
+      background: linear-gradient(90deg, #FA6A00, #94E9F8);
+    }
+    .pill-sprint span {
+      background: linear-gradient(180deg, #fff 0%, #e8f8ff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* гулять по горам — orange→teal, "по горам" in teal */
+    .pill-walk {
+      background: rgba(38,38,38,0.42);
+    }
+    .pill-walk::before {
+      background: linear-gradient(90deg, #FA6A00, #94E9F8);
+    }
+    .pill-walk .plain {
+      color: #fff;
+    }
+    .pill-walk .teal {
+      background: linear-gradient(90deg, #94E9F8, #5CDCD2);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* сбежать из города — orange→pink */
+    .pill-flee {
+      background: rgba(38,38,38,0.42);
+    }
+    .pill-flee::before {
+      background: linear-gradient(90deg, #FA6A00, #E55D74);
+    }
+    .pill-flee span {
+      background: linear-gradient(180deg, #fff 0%, #ffe8ee 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── ALPS ICON ── */
+    .alps-icon {
+      position: absolute;
+      left: 50%; top: 570px;
+      transform: translateX(-50%);
+      width: 52px; height: 52px;
+      z-index: 6;
+      object-fit: contain;
+    }
+
+    /* ── CTA BUTTON ── */
+    .cta-wrap {
+      position: absolute;
+      left: 24px; top: 638px;
+      width: 342px;
+      z-index: 8;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+    }
+    .cta-bg {
+      position: absolute; inset: 0;
+      background: rgba(243,168,27,0.88);
+      border-radius: 40px;
+      box-shadow: 0 4px 40px rgba(243,168,27,0.35), 0 2px 20px rgba(0,0,0,0.3);
+    }
+    .cta-inner {
+      position: relative;
+      padding: 14px 20px 15px;
+      text-align: center;
+    }
+    .cta-main {
+      display: block;
+      font-size: 22px; font-weight: 500; letter-spacing: -0.2px;
+      color: #0a0a0a; line-height: 1.2;
+    }
+    .cta-sub {
+      display: block;
+      font-size: 14px; font-weight: 300; letter-spacing: -0.1px;
+      color: #1a1a1a; margin-top: 3px;
+    }
+
+    /* ── BOTTOM TEXT STRIP ── */
+    .bottom-strip {
+      position: absolute;
+      left: 14px; top: 750px;
+      z-index: 8;
+    }
+    .bottom-main {
+      font-size: 29px; font-weight: 400; letter-spacing: -0.3px;
+      line-height: 1.2;
+      background: linear-gradient(90deg, rgba(243,168,27,0.90) 15%, #5CDCD2 70%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .bottom-sub {
+      font-size: 17px; font-weight: 300; letter-spacing: -0.15px;
+      margin-top: 2px;
+      padding-left: 110px;
+      background: linear-gradient(90deg, rgba(243,168,27,0.90) 15%, #5CDCD2 70%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── ANIMATIONS ── */
+    .bg-photo    { animation: fadeIn .9s ease .05s both; }
+    .rating      { animation: slideDown .55s cubic-bezier(.34,1.56,.64,1) .2s both; }
+    .apgrade-wrap{ animation: riseUp .65s cubic-bezier(.34,1.56,.64,1) .38s both; }
+    .productivity{ animation: riseUp .65s ease-out .50s both; }
+    .a-ne        { animation: riseUp .65s ease-out .58s both; }
+    .char-wrap   { animation: charIn .9s cubic-bezier(.34,1.56,.64,1) .45s both; }
+    .tags        { animation: riseUp .7s ease-out .70s both; }
+    .alps-icon   { animation: fadeIn .5s ease-out .90s both; }
+    .cta-wrap    { animation: popIn .7s cubic-bezier(.34,1.56,.64,1) 1.00s both; }
+    .bottom-strip{ animation: riseUp .6s ease-out 1.10s both; }
+
+    @keyframes fadeIn   { from{opacity:0}              to{opacity:1} }
+    @keyframes slideDown{ from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:none} }
+    @keyframes riseUp   { from{opacity:0;transform:translateY(18px)}  to{opacity:1;transform:none} }
+    @keyframes charIn   { from{opacity:0;transform:rotate(-8deg) translateX(-24px)} to{opacity:1;transform:rotate(-8deg)} }
+    @keyframes popIn    { from{opacity:0;transform:scale(.90)} to{opacity:1;transform:scale(1)} }
+
+    /* CTA hover */
+    .cta-wrap { transition: transform 140ms ease-out; }
+    .cta-wrap:hover { transform: translateY(-3px); }
+    .cta-wrap:hover .cta-bg { box-shadow: 0 8px 50px rgba(243,168,27,0.45), 0 2px 20px rgba(0,0,0,0.3); }
+    .cta-wrap:active { transform: translateY(0); transition-duration: 80ms; }
+
+    /* scale for smaller screens */
+    @media (max-height: 880px) {
+      .phone { transform: scale(0.86); transform-origin: top center; }
+      body   { align-items: flex-start; padding-top: 16px; }
+    }
+    @media (max-height: 760px) {
+      .phone { transform: scale(0.74); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- BG PHOTO -->
+  <div class="bg-photo">
+    <img src="images/m1-bg.png" alt="База отдыха Белый Аист">
+  </div>
+  <div class="bg-overlay"></div>
+  <div class="bg-dark"></div>
+
+  <!-- RATING BADGE -->
+  <div class="rating">
+    <span class="rating__score">4.9</span>
+    <div class="rating__sep"></div>
+    <div class="rating__ya">
+      <div class="rating__ya-dot">Я</div>
+      <div class="rating__ya-label">Яндекс<br>Путешествия</div>
+    </div>
+  </div>
+
+  <!-- АПГРЕЙД -->
+  <div class="apgrade-wrap">
+    <div class="apgrade-border"></div>
+    <span class="apgrade-text">АПГРЕЙД</span>
+  </div>
+
+  <!-- ПРОДУКТИВНОСТИ -->
+  <p class="productivity">ПРОДУКТИВНОСТИ</p>
+
+  <!-- а не отпуск -->
+  <p class="a-ne">
+    <span class="a-ne__plain">а не </span><span class="a-ne__teal">отпуск</span>
+  </p>
+
+  <!-- CHARACTER -->
+  <div class="char-wrap">
+    <div class="char-shadow"></div>
+    <img class="char-img" src="images/m1-char.png" alt="">
+  </div>
+
+  <!-- PILL TAGS -->
+  <div class="tags">
+    <span class="pill pill-reload"><span>перезагрузка</span></span>
+    <span class="pill pill-sprint"><span>закончить СПРИНТ</span></span>
+    <span class="pill pill-walk"><span class="plain">гулять </span><span class="teal">по горам</span></span>
+    <span class="pill pill-flee"><span>сбежать из города</span></span>
+  </div>
+
+  <!-- ALPS ICON -->
+  <img class="alps-icon" src="images/m1-alps.png" alt="">
+
+  <!-- CTA -->
+  <a class="cta-wrap" href="https://travel.yandex.ru/hotels/altai-krai/belyi-aist/" target="_blank">
+    <div class="cta-bg"></div>
+    <div class="cta-inner">
+      <span class="cta-main">забронировать пн-чт</span>
+      <span class="cta-sub">( баня в подарок 🎁 )</span>
+    </div>
+  </a>
+
+  <!-- BOTTOM STRIP -->
+  <div class="bottom-strip">
+    <p class="bottom-main">Это место для тебя</p>
+    <p class="bottom-sub">потому что</p>
+  </div>
+
+</div>
+
+</body>
+</html>

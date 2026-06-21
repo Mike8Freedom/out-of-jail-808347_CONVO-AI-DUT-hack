@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Белый Аист — Глэмпинг на Алтае</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      height: 100%;
+    }
+    body {
+      font-family: 'Unbounded', sans-serif;
+      background: #1a1919;
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+      height: 100%;
+    }
+
+    /* ═══ Each section fills exactly one viewport ═══ */
+    .screen {
+      width: 100%;
+      height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      scroll-snap-align: start;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ═══ Phone frame — 390×844, scaled to fit viewport ═══ */
+    .frame {
+      width: 390px;
+      height: 844px;
+      position: relative;
+      overflow: hidden;
+      background: #3E3D3D;
+      transform: scale(var(--s, 1));
+      transform-origin: center center;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════
+       M1 — HERO
+    ══════════════════════════════ */
+
+    /* BG photo */
+    .m1-bg {
+      position: absolute;
+      left: -3px; top: 9px;
+      width: 396px; height: 786px;
+      border-radius: 77px; overflow: hidden; z-index: 0;
+    }
+    .m1-bg img { width: 100%; height: 100%; object-fit: cover; }
+    .m1-overlay {
+      position: absolute; left: -35px; top: 0;
+      width: 442px; height: 758px;
+      background: linear-gradient(180deg, rgba(52,51,51,.36) 10%, rgba(26,25,25,.51) 100%);
+      z-index: 1;
+    }
+
+    /* Rating */
+    .m1-rating {
+      position: absolute; left: 24px; top: 27px; z-index: 10;
+      display: flex; align-items: center;
+    }
+    .m1-rating__pill {
+      background: #fff; border-radius: 37px;
+      padding: 5px 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .m1-rating__num { font-size: 22px; font-weight: 400; letter-spacing: -.22px; color: #010000; line-height: 1; }
+    .m1-rating__img { height: 41px; width: 89px; object-fit: cover; border-radius: 8px; }
+
+    /* АПГРЕЙД */
+    .m1-apgrade {
+      position: absolute; left: 33px; top: 111px;
+      width: 324px; height: 64px; z-index: 5;
+    }
+    .m1-apgrade__border {
+      position: absolute; inset: 0; border-radius: 37px;
+      background: linear-gradient(#3E3D3D, #3E3D3D) padding-box,
+                  linear-gradient(90deg, #FA6A00, #94E9F8) border-box;
+      border: 3px solid transparent;
+    }
+    .m1-apgrade__text {
+      position: absolute; left: 22px; top: 50%; transform: translateY(-50%);
+      font-size: 43px; font-weight: 300; letter-spacing: 9px;
+      color: #fff; line-height: 1; white-space: nowrap;
+    }
+
+    /* ПРОДУКТИВНОСТИ */
+    .m1-prod {
+      position: absolute; left: 7px; top: 198px;
+      font-size: 31px; font-weight: 400; letter-spacing: -.31px;
+      background: linear-gradient(90deg, #fff 24%, #5CDCD2 66%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      z-index: 5; line-height: normal;
+    }
+
+    /* а не отпуск */
+    .m1-sub {
+      position: absolute; left: 169px; top: 244px;
+      font-size: 31px; font-weight: 400; z-index: 5; line-height: normal;
+    }
+    .m1-sub__plain { color: #fff; }
+    .m1-sub__grad {
+      background: linear-gradient(90deg, #EAFBFA 0%, #E59914 57%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    /* Character */
+    .m1-char {
+      position: absolute; left: -55px; top: 267px;
+      transform: rotate(-9.85deg); z-index: 4;
+    }
+    .m1-char__shadow {
+      position: absolute; left: -71px; top: 21px;
+      width: 326px; height: 195px;
+      background: rgba(13,13,13,.27); border-radius: 50%;
+      transform: rotate(8deg) skewX(2deg);
+    }
+    .m1-char__img {
+      width: 232px; height: 155px; border-radius: 101px;
+      object-fit: cover; object-position: top; opacity: .89; position: relative; z-index: 1;
+    }
+
+    /* Tags */
+    .m1-tags {
+      position: absolute; left: 9px; top: 422px;
+      z-index: 6; display: flex; flex-direction: column; gap: 5px;
+    }
+    .pill {
+      display: inline-block; padding: 5px 16px; border-radius: 100px;
+      font-size: 21px; font-weight: 300; letter-spacing: -.21px;
+      white-space: nowrap; transform: rotate(-.71deg); position: relative;
+    }
+    .pill::before {
+      content: ''; position: absolute; inset: 0; border-radius: 100px; padding: 3px;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+    }
+    .pill-a { background: rgba(41,41,41,.98); }
+    .pill-a::before { background: linear-gradient(90deg,#5FC52F,#94E9F8); }
+    .pill-a span { background: linear-gradient(180deg,#fff 12%,#ECF6FF 49%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .pill-b { background: rgba(41,41,41,.13); }
+    .pill-b::before { background: linear-gradient(90deg,#FA6A00,#94E9F8); }
+    .pill-b span { background: linear-gradient(180deg,#fff 12%,#ECF6FF 49%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .pill-c { background: rgba(41,41,41,.43); }
+    .pill-c::before { background: linear-gradient(90deg,#FA6A00,#94E9F8); }
+    .pill-c span { background: linear-gradient(90deg,#fff 0%,#5CDCD2 35%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:400; }
+    .pill-d { background: rgba(41,41,41,.43); }
+    .pill-d::before { background: linear-gradient(90deg,#FA6A00,#E55D74); }
+    .pill-d span { background: linear-gradient(180deg,#fff 12%,#ECF6FF 49%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+    /* Alps */
+    .m1-alps {
+      position: absolute; left: 147px; top: 582px;
+      width: 60px; height: 60px; object-fit: contain; z-index: 6;
+    }
+
+    /* CTA */
+    .m1-cta {
+      position: absolute; left: 28px; top: 654px;
+      width: 334px; height: 82px;
+      z-index: 8; text-decoration: none;
+      transition: transform .3s;
+    }
+    .m1-cta:hover { transform: scale(1.02); }
+    .m1-cta__bg {
+      position: absolute; inset: 0; border-radius: 37px;
+      background: rgba(243,168,27,.86);
+      box-shadow: 0 4px 34px 9px rgba(0,0,0,.25);
+    }
+    .m1-cta__main {
+      position: absolute; left: 0; right: 0; top: 16px;
+      text-align: center; font-size: 24px; font-weight: 500;
+      letter-spacing: -.24px; color: #000; line-height: 1;
+    }
+    .m1-cta__sub {
+      position: absolute; left: 0; right: 50px; top: 49px;
+      text-align: center; font-size: 15px; font-weight: 300;
+      letter-spacing: -.16px; color: #000; line-height: 1;
+    }
+    .m1-cta__gift {
+      position: absolute; right: 18px; top: 50px;
+      width: 26px; height: 26px; object-fit: contain;
+    }
+
+    /* Bottom */
+    .m1-bottom {
+      position: absolute; left: 10px; top: 758px; z-index: 8;
+    }
+    .m1-bottom__main {
+      font-size: 31px; font-weight: 400; letter-spacing: -.31px;
+      background: linear-gradient(90deg, rgba(243,168,27,.86) 24%, #5CDCD2 66%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height: normal;
+    }
+    .m1-bottom__sub {
+      font-size: 19px; font-weight: 400; letter-spacing: -.19px;
+      background: linear-gradient(90deg, rgba(243,168,27,.86) 24%, #5CDCD2 66%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-top: 2px; padding-left: 115px;
+    }
+
+    /* M1 entrance */
+    .m1-bg      { animation: aFadeIn .8s ease .1s both; }
+    .m1-rating  { animation: aFadeDown .6s cubic-bezier(.34,1.56,.64,1) .3s both; }
+    .m1-apgrade { animation: aFadeUp .7s cubic-bezier(.34,1.56,.64,1) .45s both; }
+    .m1-prod    { animation: aFadeUp .7s ease .55s both; }
+    .m1-sub     { animation: aFadeUp .7s ease .65s both; }
+    .m1-char    { animation: aChar 1s cubic-bezier(.34,1.56,.64,1) .5s both; }
+    .m1-tags    { animation: aFadeUp .8s ease .75s both; }
+    .m1-alps    { animation: aFadeIn .6s ease .9s both; }
+    .m1-cta     { animation: aScale .8s cubic-bezier(.34,1.56,.64,1) 1s both; }
+    .m1-bottom  { animation: aFadeUp .7s ease 1.1s both; }
+
+    @keyframes aFadeIn  { from{opacity:0} to{opacity:1} }
+    @keyframes aFadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+    @keyframes aFadeDown{ from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:none} }
+    @keyframes aChar    { from{opacity:0;transform:rotate(-9.85deg) translateX(-30px)} to{opacity:1;transform:rotate(-9.85deg)} }
+    @keyframes aScale   { from{opacity:0;transform:scale(.92)} to{opacity:1;transform:scale(1)} }
+
+    /* ══════════════════════════════
+       M2 — БОЛЬ → МЕЧТА
+    ══════════════════════════════ */
+
+    /* Card inside frame */
+    .m2-card {
+      position: absolute;
+      left: 16px; top: 17px;
+      width: 358px; height: 760px;
+      border-radius: 73px; overflow: hidden;
+      opacity: 0; transform: translateY(40px);
+      transition: opacity .7s ease, transform .8s cubic-bezier(.34,1.56,.64,1);
+    }
+    .m2-card.visible { opacity: 1; transform: none; }
+
+    /* States */
+    .m2-state {
+      position: absolute; inset: 0; border-radius: 73px; overflow: hidden;
+      transition: opacity .9s cubic-bezier(.4,0,.2,1);
+    }
+    .m2-state.pain  { opacity: 1; z-index: 2; }
+    .m2-state.dream { opacity: 0; z-index: 1; }
+    .m2-card.show-dream .m2-state.pain  { opacity: 0; }
+    .m2-card.show-dream .m2-state.dream { opacity: 1; z-index: 3; }
+
+    .m2-bg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+    }
+    .m2-state.pain  .m2-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(20,5,5,.05) 0%, rgba(0,0,0,.42) 65%, rgba(0,0,0,.62) 100%);
+    }
+    .m2-state.dream .m2-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(5,15,20,.03) 0%, rgba(0,8,15,.28) 65%, rgba(0,5,10,.52) 100%);
+    }
+
+    /* Title */
+    .m2-title {
+      position: absolute; right: 24px; top: 28px;
+      font-size: 31px; font-weight: 200; letter-spacing: -.31px; z-index: 3;
+    }
+    .m2-state.pain .m2-title {
+      background: linear-gradient(90deg, rgba(243,168,27,.86) 24%, #5CDCD2 66%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .m2-state.dream .m2-title {
+      background: linear-gradient(90deg, #5CDCD2 24%, rgba(243,168,27,.86) 66%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    /* Progress bar */
+    .m2-prog {
+      position: absolute; left: 44px; top: 22px;
+      width: 270px; height: 3px; border-radius: 2px;
+      background: rgba(255,255,255,.15); z-index: 5; overflow: hidden;
+    }
+    .m2-prog__fill {
+      height: 100%; border-radius: 2px;
+      background: rgba(255,255,255,.7); width: 0%; transition: width linear;
+    }
+
+    /* Sticker */
+    .m2-sticker {
+      position: absolute; left: -10px; bottom: 72px;
+      width: 145px; transform: rotate(-7deg);
+      z-index: 4; pointer-events: none;
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,.4));
+    }
+    .m2-state.dream .m2-sticker {
+      transform: rotate(-10deg); width: 130px; left: 0; bottom: 78px;
+    }
+
+    /* Pill */
+    .m2-pill {
+      position: absolute; left: 44px; bottom: 60px;
+      width: 270px; height: 52px; border-radius: 85px;
+      display: flex; align-items: center; z-index: 3;
+    }
+    .m2-state.pain .m2-pill {
+      background: linear-gradient(90deg, #353232 0%, #950c23 100%);
+    }
+    .m2-state.dream .m2-pill {
+      background: linear-gradient(90deg, rgba(30,40,40,.9), rgba(30,90,85,.9));
+      border: 1.5px solid rgba(92,220,210,.35);
+    }
+    .m2-pill__text {
+      margin-left: auto; margin-right: 24px;
+      font-size: 18px; font-weight: 200; letter-spacing: -.18px;
+      color: #E5E0D8; white-space: nowrap;
+    }
+
+    /* Dots */
+    .m2-dots {
+      position: absolute; bottom: 18px; left: 0; right: 0;
+      display: flex; gap: 6px; justify-content: center; z-index: 6;
+    }
+    .m2-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,.3); transition: all .4s ease;
+    }
+    .m2-dot.active { width: 22px; border-radius: 3px; background: rgba(255,255,255,.85); }
+  </style>
+</head>
+<body>
+
+<!-- ══ M1: HERO ══ -->
+<section class="screen" id="s1">
+  <div class="frame" id="m1frame">
+
+    <div class="m1-bg"><img src="images/m1-bg.png" alt=""></div>
+    <div class="m1-overlay"></div>
+
+    <div class="m1-rating">
+      <div class="m1-rating__pill">
+        <span class="m1-rating__num">4.9</span>
+        <img class="m1-rating__img" src="images/m1-rating.png" alt="Яндекс Путешествия">
+      </div>
+    </div>
+
+    <div class="m1-apgrade">
+      <div class="m1-apgrade__border"></div>
+      <span class="m1-apgrade__text">АПГРЕЙД</span>
+    </div>
+
+    <p class="m1-prod">ПРОДУКТИВНОСТИ</p>
+
+    <p class="m1-sub">
+      <span class="m1-sub__plain">а не </span><span class="m1-sub__grad">отпуск</span>
+    </p>
+
+    <div class="m1-char">
+      <div class="m1-char__shadow"></div>
+      <img class="m1-char__img" src="images/m1-char.png" alt="">
+    </div>
+
+    <div class="m1-tags">
+      <span class="pill pill-a"><span>перезагрузка</span></span>
+      <span class="pill pill-b"><span>закончить спринт</span></span>
+      <span class="pill pill-c"><span>гулять по горам</span></span>
+      <span class="pill pill-d"><span>сбежать из города</span></span>
+    </div>
+
+    <img class="m1-alps" src="images/m1-alps.png" alt="">
+
+    <a class="m1-cta" href="https://travel.yandex.ru/hotels/altai-krai/belyi-aist/" target="_blank">
+      <div class="m1-cta__bg"></div>
+      <span class="m1-cta__main">забронировать пн-чт</span>
+      <span class="m1-cta__sub">( баня в подарок )</span>
+      <img class="m1-cta__gift" src="images/m1-gift.png" alt="🎁">
+    </a>
+
+    <div class="m1-bottom">
+      <p class="m1-bottom__main">Это место для тебя</p>
+      <p class="m1-bottom__sub">потому что</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ M2: БОЛЬ → МЕЧТА ══ -->
+<section class="screen" id="s2">
+  <div class="frame" id="m2frame">
+
+    <div class="m2-card" id="m2card">
+
+      <div class="m2-state pain">
+        <img class="m2-bg" src="images/m2-pain-1.png" alt="">
+        <div class="m2-overlay"></div>
+        <p class="m2-title">У нас нет</p>
+        <div class="m2-prog"><div class="m2-prog__fill" id="fp"></div></div>
+        <img class="m2-sticker" src="images/m2-sticker-pain.png" alt="">
+        <div class="m2-pill"><span class="m2-pill__text">шум, тусовки</span></div>
+      </div>
+
+      <div class="m2-state dream">
+        <img class="m2-bg" src="images/m2-dream-1.png" alt="">
+        <div class="m2-overlay"></div>
+        <p class="m2-title">У нас есть</p>
+        <div class="m2-prog"><div class="m2-prog__fill" id="fd"></div></div>
+        <img class="m2-sticker" src="images/m1-char.png" alt="">
+        <div class="m2-pill"><span class="m2-pill__text">спокойно</span></div>
+      </div>
+
+    </div>
+
+    <div class="m2-dots">
+      <div class="m2-dot active" id="dp"></div>
+      <div class="m2-dot" id="dd"></div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  /* ── Scale frames to fit viewport ── */
+  function scaleFrames() {
+    const sw = window.innerWidth, sh = window.innerHeight;
+    const s = Math.min(sw / 390, sh / 844, 1); // never upscale
+    document.querySelectorAll('.frame').forEach(f => {
+      f.style.setProperty('--s', s);
+      f.style.transform = `scale(${s})`;
+    });
+  }
+  scaleFrames();
+  window.addEventListener('resize', scaleFrames);
+
+  /* ── M2 cycle ── */
+  const m2card = document.getElementById('m2card');
+  const dp = document.getElementById('dp'), dd = document.getElementById('dd');
+  const fp = document.getElementById('fp'), fd = document.getElementById('fd');
+  const HOLD = 3400, TRANS = 900;
+  let isDream = false, started = false, t = null;
+
+  function fillStart(el) {
+    el.style.transition = 'none'; el.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      el.style.transition = `width ${HOLD}ms linear`; el.style.width = '100%';
+    }));
+  }
+  function fillReset(el) { el.style.transition = 'none'; el.style.width = '0%'; }
+
+  function flip() {
+    isDream = !isDream;
+    m2card.classList.toggle('show-dream', isDream);
+    if (isDream) {
+      dp.classList.remove('active'); dd.classList.add('active');
+      fillReset(fp); setTimeout(() => fillStart(fd), 50);
+    } else {
+      dd.classList.remove('active'); dp.classList.add('active');
+      fillReset(fd); setTimeout(() => fillStart(fp), 50);
+    }
+    t = setTimeout(flip, HOLD + TRANS);
+  }
+
+  function startM2() {
+    if (started) return; started = true;
+    m2card.classList.add('visible');
+    fillStart(fp);
+    t = setTimeout(flip, HOLD);
+  }
+
+  const s2 = document.getElementById('s2');
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { startM2(); obs.disconnect(); }
+  }, { threshold: 0.1 });
+  obs.observe(s2);
+  // Fallback for when page loads already scrolled to M2
+  setTimeout(() => {
+    const r = s2.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) startM2();
+  }, 400);
+</script>
+
+</body>
+</html>

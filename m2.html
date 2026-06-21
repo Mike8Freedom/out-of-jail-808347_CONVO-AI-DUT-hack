@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Белый Аист — M2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; min-height: 100%;
+      background: #1a1919;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══ Phone shell ══ */
+    .phone {
+      width: 390px;
+      height: 844px;
+      position: relative;
+      overflow: hidden;
+      background: #3E3D3D;
+      border-radius: 40px;
+      box-shadow: 0 40px 120px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.06);
+      flex-shrink: 0;
+    }
+
+    /* ══ Card ══ */
+    .card {
+      position: absolute;
+      left: 16px; top: 17px;
+      width: 342px; height: 608px;
+      border-radius: 73px;
+      overflow: hidden;
+    }
+
+    /* ══ States — pain & dream stack on top of each other ══ */
+    .state {
+      position: absolute; inset: 0;
+      border-radius: 73px;
+      overflow: hidden;
+      transition: opacity .9s cubic-bezier(.4,0,.2,1);
+    }
+    .state.pain  { opacity: 1; z-index: 2; }
+    .state.dream { opacity: 0; z-index: 1; }
+
+    /* When "flipped": pain hides, dream shows */
+    .card.show-dream .state.pain  { opacity: 0; }
+    .card.show-dream .state.dream { opacity: 1; z-index: 2; }
+
+    /* Background photo */
+    .state__bg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+    }
+
+    /* Dark overlay */
+    .state__overlay {
+      position: absolute; inset: 0;
+      border-radius: 73px;
+    }
+    .state.pain  .state__overlay {
+      background: linear-gradient(180deg, rgba(20,5,5,.08) 0%, rgba(10,2,2,.45) 60%, rgba(0,0,0,.62) 100%);
+    }
+    .state.dream .state__overlay {
+      background: linear-gradient(180deg, rgba(5,15,20,.04) 0%, rgba(0,8,15,.35) 60%, rgba(0,5,10,.58) 100%);
+    }
+
+    /* ══ Title (top-right) ══ */
+    .title {
+      position: absolute;
+      right: 22px; top: 26px;
+      font-size: 31px; font-weight: 200;
+      letter-spacing: -.31px; line-height: 1;
+      z-index: 3;
+      transition: opacity .6s ease .1s;
+    }
+    /* Pain title — amber→teal gradient */
+    .state.pain .title {
+      background: linear-gradient(90deg, rgba(243,168,27,.86) 24%, #5CDCD2 66%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    /* Dream title — teal→amber gradient (reversed) */
+    .state.dream .title {
+      background: linear-gradient(90deg, #5CDCD2 24%, rgba(243,168,27,.86) 66%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    /* ══ Bottom pill bar ══ */
+    .pill-bar {
+      position: absolute;
+      left: 44px; bottom: 52px;
+      width: 300px; height: 52px;
+      border-radius: 85px;
+      display: flex; align-items: center;
+      z-index: 3;
+    }
+    .state.pain .pill-bar {
+      background: linear-gradient(90deg, #353232 0%, #950c23 100%);
+    }
+    .state.dream .pill-bar {
+      background: linear-gradient(90deg, rgba(30,35,35,.9) 0%, rgba(40,100,95,.9) 100%);
+      border: 1.5px solid rgba(92,220,210,.35);
+    }
+
+    .pill-bar__text {
+      margin-left: auto;
+      margin-right: 24px;
+      font-size: 18px; font-weight: 200; letter-spacing: -.18px;
+      color: #E5E0D8;
+      white-space: nowrap;
+    }
+
+    /* ══ Sticker ══ */
+    .sticker {
+      position: absolute;
+      left: -10px; bottom: 30px;
+      width: 145px;
+      transform: rotate(-7deg);
+      z-index: 4;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,.4));
+    }
+    .state.dream .sticker {
+      transform: rotate(-12.9deg);
+      width: 126px;
+      left: 0; bottom: 40px;
+    }
+
+    /* ══ Bottom label (outside card) ══ */
+    .bottom-label {
+      position: absolute;
+      left: 24px; bottom: 34px;
+      font-size: 14px; font-weight: 200; letter-spacing: -.14px;
+      color: rgba(255,255,255,.35);
+      line-height: 1.5;
+      z-index: 5;
+    }
+
+    /* ══ Progress dots ══ */
+    .dots {
+      position: absolute;
+      bottom: 16px; left: 0; right: 0;
+      display: flex; gap: 6px;
+      justify-content: center; align-items: center;
+      z-index: 6;
+    }
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.3);
+      transition: all .4s ease;
+    }
+    .dot.active {
+      width: 22px;
+      border-radius: 3px;
+      background: rgba(255,255,255,.85);
+    }
+
+    /* ══ Progress bar inside card ══ */
+    .progress-bar {
+      position: absolute;
+      left: 44px; top: 24px;
+      width: 300px; height: 3px;
+      border-radius: 2px;
+      background: rgba(255,255,255,.15);
+      z-index: 5;
+      overflow: hidden;
+    }
+    .progress-bar__fill {
+      height: 100%;
+      border-radius: 2px;
+      background: rgba(255,255,255,.7);
+      width: 0%;
+      transition: width linear;
+    }
+
+    /* ══ Entrance animation ══ */
+    .phone { opacity: 0; transform: translateY(30px); }
+    .phone.visible {
+      opacity: 1; transform: none;
+      transition: opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    /* Scale on small screens */
+    @media (max-height: 880px) {
+      .phone { transform: scale(.85); transform-origin: top center; }
+      body { align-items: flex-start; padding-top: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <!-- Card with two stacked states -->
+  <div class="card" id="card">
+
+    <!-- PAIN state -->
+    <div class="state pain">
+      <img class="state__bg" src="images/m2-pain-1.png" alt="">
+      <div class="state__overlay"></div>
+      <p class="title">У нас нет</p>
+
+      <!-- Progress bar -->
+      <div class="progress-bar"><div class="progress-bar__fill" id="fill-pain"></div></div>
+
+      <!-- Sticker: shocked nomad -->
+      <img class="sticker" src="images/m2-sticker-pain.png" alt="">
+
+      <!-- Pill -->
+      <div class="pill-bar">
+        <span class="pill-bar__text">шум, тусовки</span>
+      </div>
+    </div>
+
+    <!-- DREAM state -->
+    <div class="state dream">
+      <img class="state__bg" src="images/m2-dream-1.png" alt="">
+      <div class="state__overlay"></div>
+      <p class="title">У нас есть</p>
+
+      <!-- Progress bar -->
+      <div class="progress-bar"><div class="progress-bar__fill" id="fill-dream"></div></div>
+
+      <!-- Sticker: relaxed nomad -->
+      <img class="sticker" src="images/m1-char.png" alt="">
+
+      <!-- Pill -->
+      <div class="pill-bar">
+        <span class="pill-bar__text">спокойно</span>
+      </div>
+    </div>
+
+  </div><!-- /card -->
+
+  <!-- Dots indicator -->
+  <div class="dots">
+    <div class="dot active" id="dot-pain"></div>
+    <div class="dot" id="dot-dream"></div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+  const card = document.getElementById('card');
+  const dotPain  = document.getElementById('dot-pain');
+  const dotDream = document.getElementById('dot-dream');
+  const fillPain  = document.getElementById('fill-pain');
+  const fillDream = document.getElementById('fill-dream');
+  const phone = document.getElementById('phone');
+
+  const HOLD   = 3400;  // ms each card stays
+  const TRANS  = 900;   // ms crossfade
+
+  let currentDream = false;
+  let timer = null;
+  let started = false;
+
+  function startFill(fillEl) {
+    fillEl.style.transition = 'none';
+    fillEl.style.width = '0%';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        fillEl.style.transition = `width ${HOLD}ms linear`;
+        fillEl.style.width = '100%';
+      });
+    });
+  }
+
+  function resetFill(fillEl) {
+    fillEl.style.transition = 'none';
+    fillEl.style.width = '0%';
+  }
+
+  function flip() {
+    currentDream = !currentDream;
+    card.classList.toggle('show-dream', currentDream);
+
+    if (currentDream) {
+      dotPain.classList.remove('active');
+      dotDream.classList.add('active');
+      resetFill(fillPain);
+      setTimeout(() => startFill(fillDream), 100);
+    } else {
+      dotDream.classList.remove('active');
+      dotPain.classList.add('active');
+      resetFill(fillDream);
+      setTimeout(() => startFill(fillPain), 100);
+    }
+
+    timer = setTimeout(flip, HOLD + TRANS);
+  }
+
+  function startCycle() {
+    if (started) return;
+    started = true;
+    phone.classList.add('visible');
+    startFill(fillPain);
+    timer = setTimeout(flip, HOLD);
+  }
+
+  // Start when scrolled into view (or immediately if already visible)
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      startCycle();
+      observer.disconnect();
+    }
+  }, { threshold: 0.3 });
+
+  observer.observe(phone);
+
+  // Fallback: start after 500ms if already visible
+  setTimeout(() => {
+    const r = phone.getBoundingClientRect();
+    if (r.top < window.innerHeight) startCycle();
+  }, 500);
+</script>
+
+</body>
+</html>

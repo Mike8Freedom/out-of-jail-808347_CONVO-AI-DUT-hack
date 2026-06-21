@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noemi — Out of Jail 808347</title>
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.22.0.js"></script>
+<script src="https://unpkg.com/@solana/web3.js@1.95.8/lib/index.iife.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    font-family: 'Courier New', monospace;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .container { width: 460px; max-width: 95vw; }
+
+  /* Wallet */
+  .wallet-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    background: #0d1117;
+    border: 1px solid #00e5ff22;
+  }
+  .wallet-bar .label { font-size: 11px; color: #00e5ff55; text-transform: uppercase; letter-spacing: 1px; }
+  .wallet-bar .address { font-size: 12px; color: #00e5ff; }
+  .btn-wallet {
+    padding: 8px 16px; font-family: 'Courier New', monospace; font-size: 12px;
+    font-weight: bold; letter-spacing: 1px; text-transform: uppercase;
+    border: 1px solid #ab47bc; background: transparent; color: #ab47bc; cursor: pointer;
+  }
+  .btn-wallet:hover { background: #ab47bc15; }
+  .btn-wallet.connected { border-color: #4caf50; color: #4caf50; cursor: default; }
+
+  /* Video */
+  .video-wrap {
+    width: 100%; aspect-ratio: 1/1; position: relative; overflow: hidden;
+    border: 2px solid #00e5ff22; transition: all 0.5s;
+  }
+  .video-wrap.active { border-color: #00e5ff; box-shadow: 0 0 40px #00e5ff15; }
+  .video-wrap iframe { width: 100%; height: 100%; position: absolute; top: 0; left: 0; pointer-events: none; }
+
+  /* Audio indicator */
+  .audio-ind { display: none; align-items: center; justify-content: center; gap: 3px; height: 24px; margin-top: 6px; }
+  .audio-ind.on { display: flex; }
+  .audio-ind span { width: 3px; background: #00e5ff; border-radius: 2px; animation: wave 0.8s ease-in-out infinite; }
+  .audio-ind span:nth-child(1) { height: 6px; animation-delay: 0s; }
+  .audio-ind span:nth-child(2) { height: 12px; animation-delay: 0.1s; }
+  .audio-ind span:nth-child(3) { height: 18px; animation-delay: 0.2s; }
+  .audio-ind span:nth-child(4) { height: 12px; animation-delay: 0.3s; }
+  .audio-ind span:nth-child(5) { height: 6px; animation-delay: 0.4s; }
+  @keyframes wave { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+
+  /* Status */
+  .status {
+    background: #111; border: 1px solid #00e5ff22; padding: 10px 14px;
+    margin-top: 6px; font-size: 12px; color: #00e5ff88;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #333; flex-shrink: 0; }
+  .dot.connecting { background: #ff9800; animation: pulse 1s infinite; }
+  .dot.active { background: #00e5ff; animation: pulse 2s infinite; }
+  .dot.error { background: #f44336; }
+  .dot.success { background: #4caf50; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+  /* Timer */
+  .timer {
+    display: none; text-align: center; margin-top: 6px;
+    font-size: 20px; color: #00e5ff66; letter-spacing: 4px;
+  }
+  .timer.on { display: block; }
+
+  /* Buttons */
+  .controls { margin-top: 6px; }
+  .btn {
+    width: 100%; padding: 14px; font-family: 'Courier New', monospace;
+    font-size: 14px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;
+    border: 2px solid #00e5ff; background: transparent; color: #00e5ff; cursor: pointer;
+  }
+  .btn:hover { background: #00e5ff12; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn.end { border-color: #f44336; color: #f44336; }
+
+  .btn-reward {
+    display: none; width: 100%; padding: 14px; margin-top: 6px;
+    font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold;
+    letter-spacing: 2px; text-transform: uppercase;
+    border: 2px solid #ab47bc; background: transparent; color: #ab47bc; cursor: pointer;
+    animation: glowPurple 2s ease-in-out infinite;
+  }
+  .btn-reward.on { display: block; }
+  .btn-reward:hover { background: #ab47bc15; }
+  .btn-reward:disabled { opacity: 0.4; cursor: not-allowed; animation: none; }
+  .btn-reward.minted { border-color: #4caf50; color: #4caf50; animation: none; }
+
+  @keyframes glowPurple {
+    0%,100% { box-shadow: 0 0 5px #ab47bc33; }
+    50% { box-shadow: 0 0 20px #ab47bc44; }
+  }
+
+  /* NFT result */
+  .nft-result {
+    display: none; margin-top: 6px; padding: 10px 14px;
+    background: #0d1117; border: 1px solid #4caf5044;
+    font-size: 11px; color: #4caf50; word-break: break-all; line-height: 1.6;
+  }
+  .nft-result a { color: #4caf50; }
+  .nft-result.on { display: block; }
+
+  .instructions {
+    margin-top: 12px; padding: 10px 14px; background: #0d1117;
+    border: 1px solid #00e5ff15; font-size: 11px; color: #00e5ff44;
+    text-align: left; line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="wallet-bar">
+    <span class="label">Solana</span>
+    <span class="address" id="addr">Not connected</span>
+    <button class="btn-wallet" id="btnW" onclick="connectWallet()">Connect Wallet</button>
+  </div>
+
+  <div class="video-wrap" id="vw">
+    <iframe src="https://player.vimeo.com/video/1095312761?autoplay=1&loop=1&muted=1&background=1&title=0&byline=0&portrait=0"
+      frameborder="0" allow="autoplay; fullscreen; picture-in-picture" playsinline title="Noemi"></iframe>
+  </div>
+
+  <div class="audio-ind" id="ai"><span></span><span></span><span></span><span></span><span></span></div>
+
+  <div class="timer" id="timer">00:00</div>
+
+  <div class="status">
+    <div class="dot" id="dot"></div>
+    <span id="st">Connect wallet to begin.</span>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="btnS" onclick="toggleSession()" disabled>&#9742; START SESSION</button>
+  </div>
+
+  <a href="https://outofjail-808347.tilda.ws/aw1" target="_blank" style="text-decoration:none;">
+    <button class="btn-reward" id="btnR" type="button">&#9830; CLAIM YOUR REWARD</button>
+  </a>
+  <div class="nft-result" id="nftR"></div>
+
+  <div class="instructions">
+    Step 1: Connect Phantom wallet<br>
+    Step 2: Start voice session with Noemi<br>
+    Step 3: Complete session &rarr; Claim your Memory Capsule
+  </div>
+</div>
+
+<script>
+const C = {
+  APP_ID: 'f2672e5cd43c4f9cb7e5eda9d345f4ef',
+  TOKEN: '007eJxTYJjFZ5l/+rXvorVFjbe3OVw9Xrnk8pWu6H0bNur7TvwduiVTgSHNyMzcKNU0OcXEONkkzTI5yTzVNDUl0TLF2MQ0zSQ1LWqReVZDICPDZet6RiYGRjAE8RUZkvPzyvITM3WLS0pTMvN1cwvzssyzEst1k0zMks1TTI3MGBiY4MrZGIzNzCwsDQAVti7N',
+  PIPE: 'ccf2b91ce37949458f4cb5c2c084885f',
+  CH: 'convoai-studio-mqnj7jaw-b46c7d526',
+  A_UID: 366890,
+  U_UID: 12345,
+  REWARD_DELAY: 180, // seconds before reward button appears
+};
+
+let connected = false, client = null, mic = null, agentId = null;
+let wallet = null, timerInt = null, sessionSec = 0, rewardShown = false;
+
+const $ = id => document.getElementById(id);
+
+function status(t, s) { $('st').textContent = t; $('dot').className = 'dot ' + (s||''); }
+
+// ── Timer ──
+function startTimer() {
+  sessionSec = 0;
+  $('timer').className = 'timer on';
+  timerInt = setInterval(() => {
+    sessionSec++;
+    const m = String(Math.floor(sessionSec / 60)).padStart(2, '0');
+    const s = String(sessionSec % 60).padStart(2, '0');
+    $('timer').textContent = m + ':' + s;
+
+    if (sessionSec >= C.REWARD_DELAY && !rewardShown && wallet) {
+      $('btnR').className = 'btn-reward on';
+      rewardShown = true;
+      status('Reward available. Continue or claim your capsule.', 'success');
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInt) clearInterval(timerInt);
+  timerInt = null;
+}
+
+// ── Wallet ──
+function getPhantom() {
+  if (window.phantom?.solana?.isPhantom) return window.phantom.solana;
+  return null;
+}
+
+async function connectWallet() {
+  const p = getPhantom();
+  if (!p) { window.open('https://phantom.app/', '_blank'); status('Install Phantom first.', 'error'); return; }
+  try {
+    const r = await p.connect();
+    wallet = r.publicKey.toString();
+    $('addr').textContent = wallet.slice(0,4) + '...' + wallet.slice(-4);
+    $('btnW').textContent = 'Connected';
+    $('btnW').className = 'btn-wallet connected';
+    $('btnS').disabled = false;
+    status('Wallet connected. Start session when ready.', 'success');
+  } catch(e) { status('Wallet rejected.', 'error'); }
+}
+
+// ── Agora ──
+async function startAgent() {
+  const r = await fetch(`/agora-api/api/conversational-ai-agent/v2/projects/${C.APP_ID}/join`, {
+    method: 'POST',
+    headers: { 'Authorization': `agora token=${C.TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: C.CH, pipeline_id: C.PIPE,
+      properties: {
+        channel: C.CH, agent_rtc_uid: String(C.A_UID), remote_rtc_uids: ['*'],
+        token: C.TOKEN, enable_string_uid: false, idle_timeout: 600,
+        advanced_features: { enable_rtm: true, enable_sal: false },
+        parameters: { silence_config: { action: 'think', content: 'Silence is valid here. Take your time.', timeout_ms: 15000 } }
+      }
+    })
+  });
+  if (!r.ok) throw new Error('Agent failed: ' + r.status);
+  const d = await r.json();
+  agentId = d.agent_id;
+}
+
+async function stopAgent() {
+  if (!agentId) return;
+  try {
+    await fetch(`/agora-api/api/conversational-ai-agent/v2/projects/${C.APP_ID}/agents/${agentId}/leave`, {
+      method: 'POST', headers: { 'Authorization': `agora token=${C.TOKEN}`, 'Content-Type': 'application/json' }, body: '{}'
+    });
+  } catch(e) {}
+  agentId = null;
+}
+
+async function toggleSession() {
+  if (connected) await disconnect(); else await startSession();
+}
+
+async function startSession() {
+  $('btnS').disabled = true;
+  status('Initializing...', 'connecting');
+  try {
+    client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+
+    client.on('user-published', async (u, t) => {
+      await client.subscribe(u, t);
+      if (t === 'audio') { u.audioTrack.play(); $('ai').className = 'audio-ind on'; $('vw').classList.add('active'); status('Noemi is speaking...', 'active'); }
+    });
+    client.on('user-unpublished', (u, t) => {
+      if (t === 'audio') { $('ai').className = 'audio-ind'; status('Listening... ' + $('timer').textContent, 'active'); }
+    });
+
+    status('Joining channel...', 'connecting');
+    await client.join(C.APP_ID, C.CH, C.TOKEN, C.U_UID);
+
+    status('Microphone...', 'connecting');
+    mic = await AgoraRTC.createMicrophoneAudioTrack({ encoderConfig: 'speech_standard', ANS: true, AEC: true });
+    await client.publish([mic]);
+
+    status('Waking Noemi...', 'connecting');
+    await startAgent();
+
+    status('Session active.', 'active');
+    $('vw').classList.add('active');
+    connected = true;
+    $('btnS').textContent = '⏹ END SESSION';
+    $('btnS').className = 'btn end';
+    $('btnS').disabled = false;
+
+    startTimer();
+  } catch(e) {
+    console.error(e);
+    status('Error: ' + e.message, 'error');
+    $('btnS').disabled = false;
+    await disconnect();
+  }
+}
+
+async function disconnect() {
+  status('Ending session...', 'connecting');
+  stopTimer();
+  await stopAgent();
+  if (mic) { mic.close(); mic = null; }
+  if (client) { try { await client.leave(); } catch(e) {} client = null; }
+  $('vw').classList.remove('active');
+  $('ai').className = 'audio-ind';
+  connected = false;
+  $('btnS').textContent = '☎ START SESSION';
+  $('btnS').className = 'btn';
+  $('btnS').disabled = false;
+  if (wallet && !rewardShown) { $('btnR').className = 'btn-reward on'; rewardShown = true; }
+  status('Session complete. Claim your Memory Capsule.', 'success');
+}
+
+// ── NFT Mint ──
+async function mintNFT() {
+  const btn = $('btnR');
+  btn.disabled = true;
+  btn.textContent = '⏳ MINTING...';
+  status('Minting Memory Capsule on Solana devnet...', 'connecting');
+
+  try {
+    const provider = getPhantom();
+    const conn = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'), 'confirmed');
+
+    const sessionData = JSON.stringify({
+      type: 'MemoryCapsule', session: 'CBT-Session-1', creature: '808347',
+      level: 1, next_level_unlocked: true, session_type: 'CBT_micro_session',
+      memory_capsule_id: 'ooj-001', duration_sec: sessionSec,
+      timestamp: new Date().toISOString(), wallet: wallet,
+    });
+
+    const tx = new solanaWeb3.Transaction();
+    tx.add(new solanaWeb3.TransactionInstruction({
+      keys: [{ pubkey: new solanaWeb3.PublicKey(wallet), isSigner: true, isWritable: true }],
+      programId: new solanaWeb3.PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
+      data: new TextEncoder().encode(sessionData),
+    }));
+
+    const { blockhash } = await conn.getLatestBlockhash();
+    tx.recentBlockhash = blockhash;
+    tx.feePayer = new solanaWeb3.PublicKey(wallet);
+
+    const signed = await provider.signTransaction(tx);
+    const sig = await conn.sendRawTransaction(signed.serialize());
+    await conn.confirmTransaction(sig, 'confirmed');
+
+    status('Memory Capsule minted!', 'success');
+    btn.textContent = '✓ CAPSULE CLAIMED';
+    btn.className = 'btn-reward on minted';
+
+    const el = $('nftR');
+    el.className = 'nft-result on';
+    el.innerHTML = '✓ Memory Capsule #001 — CBT Session 1<br>' +
+      'TX: <a href="https://explorer.solana.com/tx/' + sig + '?cluster=devnet" target="_blank">' + sig.slice(0,8) + '...' + sig.slice(-8) + '</a><br>' +
+      'Creature: 808347 | Level: 1 | Duration: ' + Math.floor(sessionSec/60) + 'm ' + (sessionSec%60) + 's';
+
+  } catch(e) {
+    console.error(e);
+    status('Mint error: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = '♦ CLAIM MEMORY CAPSULE';
+  }
+}
+
+// Auto-reconnect wallet
+window.addEventListener('load', () => {
+  const p = getPhantom();
+  if (p?.isConnected && p.publicKey) {
+    wallet = p.publicKey.toString();
+    $('addr').textContent = wallet.slice(0,4) + '...' + wallet.slice(-4);
+    $('btnW').textContent = 'Connected';
+    $('btnW').className = 'btn-wallet connected';
+    $('btnS').disabled = false;
+    status('Wallet connected. Start session when ready.', 'success');
+  }
+});
+</script>
+</body>
+</html>

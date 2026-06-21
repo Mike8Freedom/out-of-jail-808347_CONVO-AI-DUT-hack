@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Белый Аист — IT S2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #222;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .phone {
+      width: 390px;
+      height: 844px;
+      position: relative;
+      overflow: hidden;
+      background: #3E3D3D;
+      border-radius: 40px;
+      box-shadow: 0 40px 120px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.07);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER — как m1-bottom / Group_14 ── */
+    .m2-header {
+      flex-shrink: 0;
+      padding: 17px 10px 12px;
+    }
+
+    .m2-header__title {
+      font-size: 31px;
+      font-weight: 400;
+      letter-spacing: -0.31px;
+      line-height: 1;
+      white-space: nowrap;
+      background: linear-gradient(90deg, rgba(243,168,27,.86) 24%, #5CDCD2 66%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .m2-header__because {
+      display: block;
+      margin-top: 2px;
+      text-align: right;
+      font-size: 19px;
+      font-weight: 400;
+      letter-spacing: -0.19px;
+      background: linear-gradient(90deg, rgba(243,168,27,.86) 24%, #5CDCD2 66%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── CARD 342px — как m2.html ── */
+    .stories {
+      flex: 1;
+      position: relative;
+      margin: 0 0 20px 16px;
+      width: 342px;
+      overflow: hidden;
+      border-radius: 36px;
+    }
+
+    .card {
+      position: absolute;
+      inset: 0;
+      border-radius: 36px;
+      overflow: hidden;
+      opacity: 0;
+      z-index: 0;
+      pointer-events: none;
+      transition: opacity 300ms ease;
+    }
+    .card.active {
+      opacity: 1;
+      z-index: 1;
+      pointer-events: auto;
+    }
+
+    .card__photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .card__overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: 36px;
+    }
+    .card.pain .card__overlay {
+      background: linear-gradient(180deg,
+        rgba(20,5,5,.08) 0%,
+        rgba(10,2,2,.45) 60%,
+        rgba(0,0,0,.62) 100%
+      );
+    }
+    .card.dream .card__overlay {
+      background: linear-gradient(180deg,
+        rgba(5,15,20,.04) 0%,
+        rgba(0,8,15,.35) 60%,
+        rgba(0,5,10,.58) 100%
+      );
+    }
+
+    /* ── LABEL — top-right, градиент как m2 .title ── */
+    .card__label {
+      position: absolute;
+      right: 22px;
+      top: 26px;
+      font-size: 31px;
+      font-weight: 200;
+      letter-spacing: -0.31px;
+      line-height: 1;
+      z-index: 5;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .card__label.pain {
+      background-image: linear-gradient(90deg, rgba(243,168,27,.86) 24%, #5CDCD2 66%);
+    }
+    .card__label.dream {
+      background-image: linear-gradient(90deg, #5CDCD2 24%, rgba(243,168,27,.86) 66%);
+    }
+
+    /* ── PILL — как m2 .pill-bar ── */
+    .card__pill {
+      position: absolute;
+      left: 44px;
+      bottom: 52px;
+      width: 300px;
+      height: 52px;
+      border-radius: 85px;
+      display: flex;
+      align-items: center;
+      z-index: 5;
+    }
+    .card__pill.pain {
+      background: linear-gradient(90deg, #353232 0%, #950c23 100%);
+    }
+    .card__pill.dream {
+      background: linear-gradient(90deg, #2b2624 0%, #6e4536 100%);
+    }
+
+    .card__pill-text {
+      margin-left: auto;
+      margin-right: 24px;
+      font-size: 18px;
+      font-weight: 200;
+      letter-spacing: -0.18px;
+      color: #E5E0D8;
+      white-space: nowrap;
+    }
+
+    /* ── STICKER — как m2 .sticker ── */
+    .card__sticker {
+      position: absolute;
+      z-index: 6;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,.4));
+    }
+    .card.pain .card__sticker {
+      left: -10px;
+      bottom: 30px;
+      width: 145px;
+      transform: rotate(-7deg);
+    }
+    .card.dream .card__sticker {
+      left: 0;
+      bottom: 40px;
+      width: 126px;
+      transform: rotate(-12.9deg);
+    }
+
+    /* ── TAP ZONES ── */
+    .tap {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 50%;
+      z-index: 20;
+      cursor: pointer;
+    }
+    .tap-left  { left: 0; }
+    .tap-right { right: 0; }
+
+    @media (max-height: 880px) {
+      .phone { transform: scale(.86); transform-origin: top center; }
+      body   { align-items: flex-start; padding-top: 16px; }
+    }
+    @media (max-height: 760px) {
+      .phone { transform: scale(.74); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <div class="m2-header">
+    <div class="m2-header__title">Это место для тебя</div>
+    <span class="m2-header__because">потому что</span>
+  </div>
+
+  <div class="stories" id="stories">
+
+    <div class="card pain active" id="c0" data-dur="3000">
+      <img class="card__photo" src="images/m2-pain-1.png" alt="">
+      <div class="card__overlay"></div>
+      <div class="card__label pain">У нас нет</div>
+      <img class="card__sticker" src="images/m2-sticker-pain-cropped.png" alt="">
+      <div class="card__pill pain">
+        <span class="card__pill-text">шум, тусовки</span>
+      </div>
+    </div>
+
+    <div class="card dream" id="c1" data-dur="3000">
+      <img class="card__photo" src="images/m2-dream-1.png" alt="">
+      <div class="card__overlay"></div>
+      <div class="card__label dream">У нас есть</div>
+      <img class="card__sticker" src="images/m2-sticker-dream-cropped.png" alt="">
+      <div class="card__pill dream">
+        <span class="card__pill-text">спокойно</span>
+      </div>
+    </div>
+
+    <div class="tap tap-left"  id="tapL"></div>
+    <div class="tap tap-right" id="tapR"></div>
+
+  </div>
+
+</div>
+
+<script>
+(() => {
+  const cards = Array.from(document.querySelectorAll('.card'));
+  let cur = 0, timer = null;
+
+  function dur(i) { return parseInt(cards[i].dataset.dur, 10); }
+
+  function show(i) {
+    i = Math.max(0, Math.min(cards.length - 1, i));
+    cur = i;
+    cards.forEach((c, j) => c.classList.toggle('active', j === i));
+    clearTimeout(timer);
+    timer = setTimeout(() => show(cur < cards.length - 1 ? cur + 1 : 0), dur(i));
+  }
+
+  document.getElementById('tapR').addEventListener('click', () => { if (cur < cards.length - 1) show(cur + 1); });
+  document.getElementById('tapL').addEventListener('click', () => { if (cur > 0) show(cur - 1); });
+
+  show(0);
+})();
+</script>
+</body>
+</html>
