@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/char-nomad-hero.png" width="200" alt="Noemi — System Overseer" />
+  <img src="images/char-nomad.png" width="300" alt="Noemi — System Overseer" />
 </p>
 
 <h1 align="center">🔒 Out of Jail 808347</h1>
