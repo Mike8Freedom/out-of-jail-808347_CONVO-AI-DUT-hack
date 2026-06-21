@@ -247,7 +247,7 @@ Unlike clinical wellness apps (3% Day-30 retention), Out of Jail drives return v
 | 🎬 **Animaccord** Accelerator (2022) | Sci-Fi series handpicked from 20+ pros for GO GLOBAL 16+ for Amazon Prime |
 | 🎮 **Origins of the Mountains** (2023) | Solo development of Smart Speaker Game Quest ($58K market value — 1518 Studio & HSE) |
 | 🎨 **Toda Art Gallery UAE** (2 months) | Generated **$450,000** in revenue from a live show (script, AI content, producer) |
-| 🏆 **WEB 3.0 Winner** — Yalla (2024) | Built a functional AI assistant for a major cyber-sport event. Solana / Compass, Abu Dhabi |
+| 🏆 **WEB 3.0 Winner** — Yalla Compass/Solana Hackathon (2024) | Built a functional AI assistant for a major cyber-sport event. Abu Dhabi |
 | 🧠 **SMU & APTOS** (2025) | NOEMI — AI conversational mental-health agent based on CBT scripts |
 | 📱 **Mr. Golden Sheikh** (5 months) | Achieved **180,000+** TikTok followers/reach (Producer) |
 
