@@ -236,7 +236,7 @@ Unlike clinical wellness apps (3% Day-30 retention), Out of Jail drives return v
 <table>
 <tr>
 <td width="120" align="center">
-  <img src="images/char-nomad.png" width="80" /><br>
+  <img src="images/mike-founder.png" width="80" style="border-radius:50%;" /><br>
   <b>Mike Klementev</b><br>
   <i>Producer / Developer</i>
 </td>
